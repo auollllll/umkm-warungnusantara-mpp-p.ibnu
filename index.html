@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warung Nusantara - Makanan Tradisional Autentik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-md fixed w-full top-0 z-50">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-utensils text-amber-500 text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">Warung Nusantara</h1>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-gray-700 hover:text-amber-500 transition">Beranda</a>
+                    <a href="#about" class="nav-link text-gray-700 hover:text-amber-500 transition">Tentang</a>
+                    <a href="#products" class="nav-link text-gray-700 hover:text-amber-500 transition">Produk</a>
+                    <a href="#testimonials" class="nav-link text-gray-700 hover:text-amber-500 transition">Testimoni</a>
+                    <a href="#order" class="nav-link text-gray-700 hover:text-amber-500 transition">Cara Pesan</a>
+                    <a href="#contact" class="nav-link text-gray-700 hover:text-amber-500 transition">Kontak</a>
+                    <button onclick="toggleCart()" class="relative">
+                        <i class="fas fa-shopping-cart text-gray-700 text-xl hover:text-amber-500 transition"></i>
+                        <span id="cart-count" class="cart-badge absolute -top-2 -right-2 bg-amber-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button onclick="showAdminLogin()" class="text-gray-700 hover:text-amber-500 transition">
+                        <i class="fas fa-user-shield text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden">
+                    <i class="fas fa-bars text-gray-700 text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
+                <a href="#home" class="block py-2 text-gray-700 hover:text-amber-500 transition">Beranda</a>
+                <a href="#about" class="block py-2 text-gray-700 hover:text-amber-500 transition">Tentang</a>
+                <a href="#products" class="block py-2 text-gray-700 hover:text-amber-500 transition">Produk</a>
+                <a href="#testimonials" class="block py-2 text-gray-700 hover:text-amber-500 transition">Testimoni</a>
+                <a href="#order" class="block py-2 text-gray-700 hover:text-amber-500 transition">Cara Pesan</a>
+                <a href="#contact" class="block py-2 text-gray-700 hover:text-amber-500 transition">Kontak</a>
+                <button onclick="showAdminLogin()" class="block py-2 text-gray-700 hover:text-amber-500 transition">
+                    <i class="fas fa-user-shield mr-2"></i>Admin
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Login Admin</h3>
+                    <button onclick="hideAdminLogin()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form onsubmit="handleAdminLogin(event)">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                        <input type="text" id="admin-username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="admin-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                    </div>
+                    <button type="submit" class="w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+                        Login
+                    </button>
+                </form>
+                <p class="text-sm text-gray-500 mt-4 text-center">Default: admin / admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="admin-panel fixed inset-0 bg-gray-100 z-50 overflow-y-auto">
+        <div class="container mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="bg-amber-500 text-white p-6 rounded-t-lg">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">Admin Panel</h2>
+                        <button onclick="logoutAdmin()" class="bg-white text-amber-500 px-4 py-2 rounded-lg hover:bg-gray-100 transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Admin Navigation -->
+                <div class="border-b">
+                    <div class="flex space-x-4 p-4">
+                        <button onclick="showAdminSection('dashboard')" class="admin-nav-btn px-4 py-2 rounded-lg hover:bg-amber-100 transition">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </button>
+                        <button onclick="showAdminSection('products')" class="admin-nav-btn px-4 py-2 rounded-lg hover:bg-amber-100 transition">
+                            <i class="fas fa-box mr-2"></i>Produk
+                        </button>
+                        <button onclick="showAdminSection('orders')" class="admin-nav-btn px-4 py-2 rounded-lg hover:bg-amber-100 transition">
+                            <i class="fas fa-shopping-cart mr-2"></i>Pesanan
+                        </button>
+                        <button onclick="showAdminSection('settings')" class="admin-nav-btn px-4 py-2 rounded-lg hover:bg-amber-100 transition">
+                            <i class="fas fa-cog mr-2"></i>Pengaturan
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Admin Content -->
+                <div id="admin-content" class="p-6">
+                    <!-- Dashboard Section -->
+                    <div id="admin-dashboard" class="admin-section">
+                        <h3 class="text-xl font-semibold mb-6">Dashboard</h3>
+                        <div class="grid md:grid-cols-4 gap-6 mb-8">
+                            <div class="bg-blue-50 p-6 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-blue-600 text-sm">Total Produk</p>
+                                        <p class="text-2xl font-bold text-blue-800" id="total-products">0</p>
+                                    </div>
+                                    <i class="fas fa-box text-blue-500 text-3xl"></i>
+                                </div>
+                            </div>
+                            <div class="bg-green-50 p-6 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-green-600 text-sm">Pesanan Hari Ini</p>
+                                        <p class="text-2xl font-bold text-green-800" id="today-orders">0</p>
+                                    </div>
+                                    <i class="fas fa-shopping-cart text-green-500 text-3xl"></i>
+                                </div>
+                            </div>
+                            <div class="bg-yellow-50 p-6 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-yellow-600 text-sm">Pendapatan Hari Ini</p>
+                                        <p class="text-2xl font-bold text-yellow-800" id="today-revenue">Rp 0</p>
+                                    </div>
+                                    <i class="fas fa-money-bill-wave text-yellow-500 text-3xl"></i>
+                                </div>
+                            </div>
+                            <div class="bg-purple-50 p-6 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-purple-600 text-sm">Total Pesanan</p>
+                                        <p class="text-2xl font-bold text-purple-800" id="total-orders">0</p>
+                                    </div>
+                                    <i class="fas fa-chart-line text-purple-500 text-3xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Orders -->
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="text-lg font-semibold mb-4">Pesanan Terbaru</h4>
+                            <div id="recent-orders" class="space-y-3">
+                                <!-- Recent orders will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Products Section -->
+                    <div id="admin-products" class="admin-section hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold">Kelola Produk</h3>
+                            <button onclick="showAddProductForm()" class="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition">
+                                <i class="fas fa-plus mr-2"></i>Tambah Produk
+                            </button>
+                        </div>
+                        
+                        <!-- Add/Edit Product Form -->
+                        <div id="product-form" class="bg-gray-50 p-6 rounded-lg mb-6 hidden">
+                            <h4 class="text-lg font-semibold mb-4">Form Produk</h4>
+                            <form id="product-form-element" class="grid md:grid-cols-2 gap-4">
+                                <input type="hidden" id="product-id">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Produk</label>
+                                    <input type="text" id="product-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                                    <select id="product-category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                                        <option value="makanan">Makanan</option>
+                                        <option value="minuman">Minuman</option>
+                                        <option value="kue">Kue</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Harga</label>
+                                    <input type="number" id="product-price" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Produk</label>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-1">
+                                            <input type="file" id="product-image" accept="image/*" onchange="previewImage(event)" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500">
+                                        </div>
+                                        <div id="image-preview" class="w-20 h-20 border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                                            <i class="fas fa-image text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG, GIF. Maksimal: 2MB</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                                    <textarea id="product-description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required></textarea>
+                                </div>
+                                <div class="md:col-span-2 flex gap-4">
+                                    <button type="submit" class="bg-amber-500 text-white px-6 py-2 rounded-lg hover:bg-amber-600 transition">
+                                        Simpan
+                                    </button>
+                                    <button type="button" onclick="hideProductForm()" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition">
+                                        Batal
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Products Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full bg-white rounded-lg overflow-hidden">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gambar</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-table-body" class="bg-white divide-y divide-gray-200">
+                                    <!-- Products will be displayed here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Orders Section -->
+                    <div id="admin-orders" class="admin-section hidden">
+                        <h3 class="text-xl font-semibold mb-6">Kelola Pesanan</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full bg-white rounded-lg overflow-hidden">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Pesanan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelanggan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-table-body" class="bg-white divide-y divide-gray-200">
+                                    <!-- Orders will be displayed here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Settings Section -->
+                    <div id="admin-settings" class="admin-section hidden">
+                        <h3 class="text-xl font-semibold mb-6">Pengaturan</h3>
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <form onsubmit="handleSettingsSubmit(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Toko</label>
+                                    <input type="text" id="store-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" value="Warung Nusantara">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nomor WhatsApp Admin</label>
+                                    <input type="text" id="admin-whatsapp" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" value="6281234567890">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+                                    <textarea id="store-address" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500">Jl. Nusantara No. 123, Jakarta Selatan</textarea>
+                                </div>
+                                <button type="submit" class="bg-amber-500 text-white px-6 py-2 rounded-lg hover:bg-amber-600 transition">
+                                    Simpan Pengaturan
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content (Hidden when admin is active) -->
+    <div id="main-content">
+        <!-- Hero Section -->
+        <section id="home" class="hero-pattern bg-gradient-to-br from-amber-50 to-orange-50 pt-20">
+            <div class="container mx-auto px-4 py-20">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0 fade-in">
+                        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                            Nikmati Kelezatan <span class="text-amber-500">Makanan Tradisional</span>
+                        </h2>
+                        <p class="text-lg text-gray-600 mb-8">
+                            Rasakan cita rasa autentik Nusantara dengan bahan pilihan dan resep turun temurun yang dijaga keasliannya.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="#products" class="bg-amber-500 text-white px-8 py-3 rounded-full hover:bg-amber-600 transition transform hover:scale-105 text-center">
+                                <i class="fas fa-shopping-bag mr-2"></i>Lihat Menu
+                            </a>
+                            <a href="#order" class="border-2 border-amber-500 text-amber-500 px-8 py-3 rounded-full hover:bg-amber-500 hover:text-white transition text-center">
+                                <i class="fas fa-phone mr-2"></i>Pesan Sekarang
+                            </a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <img src="https://picsum.photos/seed/warung/600/400" alt="Makanan Nusantara" class="rounded-lg shadow-2xl">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tentang Warung Nusantara</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Warung Nusantara hadir untuk melestarikan kuliner tradisional Indonesia dengan sentuhan modern
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center p-6 rounded-lg hover:shadow-lg transition">
+                        <div class="bg-amber-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-leaf text-amber-500 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Bahan Berkualitas</h3>
+                        <p class="text-gray-600">Menggunakan bahan segar pilihan dari petani lokal terpercaya</p>
+                    </div>
+                    
+                    <div class="text-center p-6 rounded-lg hover:shadow-lg transition">
+                        <div class="bg-amber-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-award text-amber-500 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Resep Autentik</h3>
+                        <p class="text-gray-600">Resep turun temurun yang dijaga keasliannya sejak generasi</p>
+                    </div>
+                    
+                    <div class="text-center p-6 rounded-lg hover:shadow-lg transition">
+                        <div class="bg-amber-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-truck text-amber-500 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Pengiriman Cepat</h3>
+                        <p class="text-gray-600">Pengantaran langsung ke rumah dengan tetap hangat dan segar</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Menu Kami</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Pilihan makanan lezat dengan cita rasa khas Nusantara
+                    </p>
+                </div>
+                
+                <!-- Filter Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 mb-12">
+                    <button onclick="filterProducts('all')" class="filter-btn bg-amber-500 text-white px-6 py-2 rounded-full hover:bg-amber-600 transition">
+                        Semua
+                    </button>
+                    <button onclick="filterProducts('makanan')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-amber-500 hover:text-white transition">
+                        Makanan
+                    </button>
+                    <button onclick="filterProducts('minuman')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-amber-500 hover:text-white transition">
+                        Minuman
+                    </button>
+                    <button onclick="filterProducts('kue')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-amber-500 hover:text-white transition">
+                        Kue
+                    </button>
+                </div>
+                
+                <!-- Products Grid -->
+                <div id="products-grid" class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Products will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Apa Kata Pelanggan</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Testimoni dari pelanggan setia Warung Nusantara
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/seed/person1/50/50" alt="Customer" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <h4 class="font-semibold">Ibu Siti</h4>
+                                <div class="text-amber-500">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Rendangnya sangat enak, bumbunya meresap sempurna. Recommended banget!"</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/seed/person2/50/50" alt="Customer" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <h4 class="font-semibold">Budi Santoso</h4>
+                                <div class="text-amber-500">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Pelayanan ramah, makanan cepat sampai dan masih hangat. Mantap!"</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/seed/person3/50/50" alt="Customer" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <h4 class="font-semibold">Maya Putri</h4>
+                                <div class="text-amber-500">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Kue tradisionalnya sangat lembut dan manisnya pas. Jadi nostalgia!"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How to Order Section -->
+        <section id="order" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Cara Pemesanan</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Mudah dan praktis, pesan makanan favorit Anda dalam 3 langkah
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="bg-amber-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                            1
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Pilih Menu</h3>
+                        <p class="text-gray-600">Lihat katalog produk kami dan pilih menu favorit Anda</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-amber-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                            2
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Hubungi Kami</h3>
+                        <p class="text-gray-600">Kontak via WhatsApp atau telepon untuk konfirmasi pesanan</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-amber-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                            3
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Tunggu Antar</h3>
+                        <p class="text-gray-600">Pesanan akan diantar langsung ke alamat Anda</p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-12">
+                    <a href="https://wa.me/6281234567890" target="_blank" class="bg-green-500 text-white px-8 py-3 rounded-full hover:bg-green-600 transition transform hover:scale-105 inline-block">
+                        <i class="fab fa-whatsapp mr-2"></i>Pesan via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Hubungi Kami</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        Kami siap melayani Anda dengan sepenuh hati
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-6">Informasi Kontak</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-amber-500 w-6"></i>
+                                <span class="ml-3 text-gray-600">Jl. Nusantara No. 123, Jakarta Selatan</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-phone text-amber-500 w-6"></i>
+                                <span class="ml-3 text-gray-600">0812-3456-7890</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-amber-500 w-6"></i>
+                                <span class="ml-3 text-gray-600">info@warungnusantara.com</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-amber-500 w-6"></i>
+                                <span class="ml-3 text-gray-600">Buka: 08:00 - 22:00 WIB</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h4 class="text-lg font-semibold mb-4">Ikuti Kami</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-white transition">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-white transition">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-white transition">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-6">Kirim Pesan</h3>
+                        <form onsubmit="handleSubmit(event)" class="space-y-4">
+                            <div>
+                                <input type="text" placeholder="Nama Lengkap" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                            </div>
+                            <div>
+                                <input type="email" placeholder="Email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                            </div>
+                            <div>
+                                <input type="tel" placeholder="Nomor Telepon" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required>
+                            </div>
+                            <div>
+                                <textarea placeholder="Pesan Anda" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-amber-500 text-white py-3 rounded-lg hover:bg-amber-600 transition">
+                                Kirim Pesan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Shopping Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Keranjang Belanja</h3>
+                    <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="cart-items" class="space-y-3 mb-4">
+                    <!-- Cart items will be displayed here -->
+                </div>
+                
+                <!-- Form Pemesan -->
+                <div class="border-t pt-4 mb-4">
+                    <h4 class="font-semibold mb-3">Informasi Pemesan</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                            <input type="text" id="customer-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Masukkan nama Anda" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp</label>
+                            <input type="tel" id="customer-whatsapp" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-amber-500" placeholder="Contoh: 081234567890" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <div class="flex justify-between mb-4">
+                        <span class="font-semibold">Total:</span>
+                        <span id="cart-total" class="font-semibold text-amber-500">Rp 0</span>
+                    </div>
+                    <button onclick="checkout()" class="w-full bg-amber-500 text-white py-3 rounded-lg hover:bg-amber-600 transition">
+                        Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-utensils text-amber-500 text-2xl"></i>
+                        <h3 class="text-xl font-bold">Warung Nusantara</h3>
+                    </div>
+                    <p class="text-gray-400">Menyajikan kelezatan kuliner tradisional Indonesia dengan cita rasa autentik.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Menu Cepat</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#home" class="hover:text-amber-500 transition">Beranda</a></li>
+                        <li><a href="#about" class="hover:text-amber-500 transition">Tentang</a></li>
+                        <li><a href="#products" class="hover:text-amber-500 transition">Produk</a></li>
+                        <li><a href="#contact" class="hover:text-amber-500 transition">Kontak</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Kategori</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-amber-500 transition">Makanan Berat</a></li>
+                        <li><a href="#" class="hover:text-amber-500 transition">Makanan Ringan</a></li>
+                        <li><a href="#" class="hover:text-amber-500 transition">Minuman</a></li>
+                        <li><a href="#" class="hover:text-amber-500 transition">Kue Tradisional</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Newsletter</h4>
+                    <p class="text-gray-400 mb-4">Dapatkan promo terbaru dari kami</p>
+                    <form onsubmit="handleNewsletter(event)" class="flex">
+                        <input type="email" placeholder="Email Anda" class="bg-gray-700 text-white px-4 py-2 rounded-l-lg flex-1 focus:outline-none focus:bg-gray-600" required>
+                        <button type="submit" class="bg-amber-500 px-4 py-2 rounded-r-lg hover:bg-amber-600 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Warung Nusantara. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Notification -->
+    <div id="notification" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="notification-text">Success!</span>
+    </div>
+
+    <script>
+        // Base URL untuk API
+        const API_BASE_URL = 'api';
+
+        // Global variables
+        let products = [];
+        let cart = [];
+        let orders = [];
+        let isAdminLoggedIn = false;
+        let currentFilter = 'all';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            updateCartCount();
+            loadOrders();
+            updateDashboardStats();
+            
+            // Tambahkan event listener untuk form produk
+            document.getElementById('product-form-element').addEventListener('submit', handleProductSubmit);
+        });
+
+        // API Functions
+        async function apiRequest(endpoint, method = 'GET', data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            if (data && method !== 'GET') {
+                options.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/${endpoint}`, options);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || 'Something went wrong');
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                showNotification(error.message || 'Terjadi kesalahan', 'error');
+                throw error;
+            }
+        }
+
+        // Upload image function
+        async function uploadImage(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/upload.php`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || 'Gagal mengunggah gambar');
+                }
+                
+                return result.url;
+            } catch (error) {
+                console.error('Upload Error:', error);
+                showNotification(error.message || 'Gagal mengunggah gambar', 'error');
+                throw error;
+            }
+        }
+
+        // Products Functions
+        async function loadProducts() {
+            try {
+                products = await apiRequest('products.php');
+                displayProducts();
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        async function saveProduct(productData) {
+            try {
+                if (productData.id) {
+                    // Update existing product
+                    await apiRequest(`products.php?id=${productData.id}`, 'PUT', productData);
+                    showNotification('Produk berhasil diperbarui!');
+                } else {
+                    // Add new product
+                    const result = await apiRequest('products.php', 'POST', productData);
+                    productData.id = result.id;
+                    showNotification('Produk berhasil ditambahkan!');
+                }
+                await loadProducts();
+                return productData;
+            } catch (error) {
+                console.error('Error saving product:', error);
+                throw error;
+            }
+        }
+
+        async function deleteProduct(productId) {
+            try {
+                await apiRequest(`products.php?id=${productId}`, 'DELETE');
+                showNotification('Produk berhasil dihapus!');
+                await loadProducts();
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                throw error;
+            }
+        }
+
+        // Orders Functions
+        async function loadOrders() {
+            try {
+                orders = await apiRequest('orders.php');
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        async function saveOrder(orderData) {
+            try {
+                const result = await apiRequest('orders.php', 'POST', orderData);
+                orderData.id = result.id;
+                showNotification('Pesanan berhasil dibuat!');
+                await loadOrders();
+                updateDashboardStats();
+                return orderData;
+            } catch (error) {
+                console.error('Error saving order:', error);
+                throw error;
+            }
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            try {
+                await apiRequest(`orders.php?id=${orderId}`, 'PUT', { id: orderId, status });
+                showNotification('Status pesanan berhasil diperbarui!');
+                await loadOrders();
+                updateDashboardStats();
+            } catch (error) {
+                console.error('Error updating order status:', error);
+                throw error;
+            }
+        }
+
+        // Display functions
+        function displayProducts() {
+            const productsGrid = document.getElementById('products-grid');
+            productsGrid.innerHTML = '';
+            
+            const filteredProducts = currentFilter === 'all' 
+                ? products 
+                : products.filter(p => p.category === currentFilter);
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition';
+                
+                const imageDisplay = product.image 
+                    ? `<img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">`
+                    : `<div class="w-full h-48 bg-gray-200 flex items-center justify-center"><i class="fas fa-image text-gray-400 text-4xl"></i></div>`;
+                
+                productCard.innerHTML = `
+                    ${imageDisplay}
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold mb-2">${product.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-500 font-bold">Rp ${product.price.toLocaleString('id-ID')}</span>
+                            <button onclick="addToCart('${product.id}')" class="bg-amber-500 text-white px-3 py-1 rounded-full hover:bg-amber-600 transition">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productsGrid.appendChild(productCard);
+            });
+        }
+
+        // Cart functions
+        function addToCart(productId) {
+            const product = products.find(p => p.id == productId);
+            if (product) {
+                const existingItem = cart.find(item => item.id == productId);
+                
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        quantity: 1
+                    });
+                }
+                
+                updateCartCount();
+                showNotification(`${product.name} ditambahkan ke keranjang!`);
+            }
+        }
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cart-count');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+
+        function toggleCart() {
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.toggle('hidden');
+            
+            if (!cartModal.classList.contains('hidden')) {
+                renderCartItems();
+            }
+        }
+
+        function renderCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">Keranjang belanja kosong</p>';
+                document.getElementById('cart-total').textContent = 'Rp 0';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'flex items-center space-x-4 bg-gray-50 p-3 rounded-lg';
+                
+                const imageDisplay = item.image 
+                    ? `<img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded">`
+                    : `<div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center"><i class="fas fa-image text-gray-400"></i></div>`;
+                
+                cartItem.innerHTML = `
+                    ${imageDisplay}
+                    <div class="flex-1">
+                        <h4 class="font-medium">${item.name}</h4>
+                        <p class="text-sm text-gray-500">Rp ${item.price.toLocaleString('id-ID')} x ${item.quantity}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="updateQuantity('${item.id}', -1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                            <i class="fas fa-minus text-xs"></i>
+                        </button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQuantity('${item.id}', 1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                            <i class="fas fa-plus text-xs"></i>
+                        </button>
+                    </div>
+                    <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                
+                cartItemsContainer.appendChild(cartItem);
+                total += item.price * item.quantity;
+            });
+            
+            document.getElementById('cart-total').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id == productId);
+            if (item) {
+                item.quantity += change;
+                
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    renderCartItems();
+                    updateCartCount();
+                }
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id != productId);
+            renderCartItems();
+            updateCartCount();
+        }
+
+        async function checkout() {
+            const customerName = document.getElementById('customer-name').value;
+            const customerWhatsapp = document.getElementById('customer-whatsapp').value;
+            
+            if (!customerName || !customerWhatsapp) {
+                showNotification('Mohon lengkapi informasi pemesan!', 'error');
+                return;
+            }
+            
+            if (cart.length === 0) {
+                showNotification('Keranjang belanja kosong!', 'error');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            const newOrder = {
+                customerName,
+                customerWhatsapp,
+                items: [...cart],
+                total,
+                status: 'pending',
+                date: new Date().toISOString()
+            };
+            
+            try {
+                await saveOrder(newOrder);
+                
+                // Clear cart
+                cart = [];
+                updateCartCount();
+                
+                // Close cart modal
+                document.getElementById('cart-modal').classList.add('hidden');
+                
+                // Reset form
+                document.getElementById('customer-name').value = '';
+                document.getElementById('customer-whatsapp').value = '';
+            } catch (error) {
+                console.error('Checkout error:', error);
+            }
+        }
+
+        // Admin functions
+        function showAdminLogin() {
+            document.getElementById('admin-login-modal').classList.remove('hidden');
+        }
+
+        function hideAdminLogin() {
+            document.getElementById('admin-login-modal').classList.add('hidden');
+        }
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (username === 'admin' && password === 'admin123') {
+                isAdminLoggedIn = true;
+                document.getElementById('admin-login-modal').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                document.getElementById('main-content').classList.add('hidden');
+                showAdminSection('dashboard');
+                updateDashboardStats();
+                loadProductsTable();
+                loadOrdersTable();
+            } else {
+                showNotification('Username atau password salah!', 'error');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+        }
+
+        function showAdminSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(`admin-${section}`).classList.remove('hidden');
+            
+            // Update nav buttons
+            document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-100');
+            });
+            event.target.classList.add('bg-amber-100');
+            
+            // Load data for specific sections
+            if (section === 'dashboard') {
+                updateDashboardStats();
+                loadRecentOrders();
+            } else if (section === 'products') {
+                loadProductsTable();
+            } else if (section === 'orders') {
+                loadOrdersTable();
+            }
+        }
+
+        function showAddProductForm() {
+            document.getElementById('product-form').classList.remove('hidden');
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-category').value = 'makanan';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-image').value = '';
+            document.getElementById('product-description').value = '';
+            document.getElementById('image-preview').innerHTML = '<i class="fas fa-image text-gray-400"></i>';
+        }
+
+        function hideProductForm() {
+            document.getElementById('product-form').classList.add('hidden');
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('image-preview');
+            
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    showNotification('Ukuran file terlalu besar! Maksimal 2MB.', 'error');
+                    event.target.value = '';
+                    return;
+                }
+                
+                if (!file.type.match('image.*')) {
+                    showNotification('Format file tidak didukung! Gunakan format gambar (JPG, PNG, GIF).', 'error');
+                    event.target.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">`;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '<i class="fas fa-image text-gray-400"></i>';
+            }
+        }
+
+        async function handleProductSubmit(event) {
+            event.preventDefault();
+            
+            const productId = document.getElementById('product-id').value;
+            const name = document.getElementById('product-name').value;
+            const category = document.getElementById('product-category').value;
+            const price = parseInt(document.getElementById('product-price').value);
+            const description = document.getElementById('product-description').value;
+            const imageInput = document.getElementById('product-image');
+            
+            let productData = {
+                name,
+                category,
+                price,
+                description
+            };
+            
+            if (productId) {
+                productData.id = productId;
+            }
+            
+            try {
+                // Handle image upload
+                if (imageInput.files && imageInput.files[0]) {
+                    const file = imageInput.files[0];
+                    const imageUrl = await uploadImage(file);
+                    productData.image = imageUrl;
+                } else if (productId) {
+                    // Keep existing image if editing and no new image uploaded
+                    const existingProduct = products.find(p => p.id == productId);
+                    if (existingProduct && existingProduct.image) {
+                        productData.image = existingProduct.image;
+                    }
+                }
+                
+                await saveProduct(productData);
+                hideProductForm();
+                loadProductsTable();
+                updateDashboardStats();
+            } catch (error) {
+                console.error('Product submit error:', error);
+            }
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id == id);
+            if (product) {
+                document.getElementById('product-form').classList.remove('hidden');
+                document.getElementById('product-id').value = product.id;
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-category').value = product.category;
+                document.getElementById('product-price').value = product.price;
+                document.getElementById('product-description').value = product.description;
+                
+                const preview = document.getElementById('image-preview');
+                if (product.image) {
+                    preview.innerHTML = `<img src="${product.image}" alt="Preview" class="w-full h-full object-cover">`;
+                }
+            }
+        }
+
+        async function deleteProductFromAdmin(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+                try {
+                    await deleteProduct(id);
+                    loadProductsTable();
+                    updateDashboardStats();
+                } catch (error) {
+                    console.error('Delete product error:', error);
+                }
+            }
+        }
+
+        function loadProductsTable() {
+            const tableBody = document.getElementById('products-table-body');
+            tableBody.innerHTML = '';
+            
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                
+                const imageDisplay = product.image 
+                    ? `<img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-cover rounded">`
+                    : `<div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center"><i class="fas fa-image text-gray-400"></i></div>`;
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${imageDisplay}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${product.name}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            ${product.category}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        Rp ${product.price.toLocaleString('id-ID')}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editProduct('${product.id}')" class="text-amber-600 hover:text-amber-900 mr-3">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteProductFromAdmin('${product.id}')" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function loadOrdersTable() {
+            const tableBody = document.getElementById('orders-table-body');
+            tableBody.innerHTML = '';
+            
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        #${order.id}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${order.customerName}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${order.customerWhatsapp}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        Rp ${order.total.toLocaleString('id-ID')}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            order.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                            order.status === 'processing' ? 'bg-yellow-100 text-yellow-800' : 
+                            'bg-blue-100 text-blue-800'
+                        }">
+                            ${order.status === 'completed' ? 'Selesai' : 
+                              order.status === 'processing' ? 'Diproses' : 
+                              'Menunggu'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${new Date(order.date).toLocaleDateString('id-ID')}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="updateOrderStatusFromAdmin('${order.id}')" class="text-amber-600 hover:text-amber-900 mr-3">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button onclick="viewOrderDetails('${order.id}')" class="text-indigo-600 hover:text-indigo-900">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateOrderStatusFromAdmin(id) {
+            const order = orders.find(o => o.id == id);
+            if (order) {
+                let newStatus;
+                if (order.status === 'pending') {
+                    newStatus = 'processing';
+                } else if (order.status === 'processing') {
+                    newStatus = 'completed';
+                } else {
+                    newStatus = 'pending';
+                }
+                updateOrderStatus(id, newStatus);
+            }
+        }
+
+        function viewOrderDetails(id) {
+            const order = orders.find(o => o.id == id);
+            if (order) {
+                let itemsHtml = '';
+                order.items.forEach(item => {
+                    itemsHtml += `
+                        <div class="flex justify-between py-2 border-b">
+                            <span>${item.name} x ${item.quantity}</span>
+                            <span>Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                        </div>
+                    `;
+                });
+                
+                const detailsHtml = `
+                    <div class="p-6 bg-white rounded-lg shadow-lg max-w-md mx-auto">
+                        <h3 class="text-lg font-semibold mb-4">Detail Pesanan #${order.id}</h3>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600">Pelanggan: ${order.customerName}</p>
+                            <p class="text-sm text-gray-600">WhatsApp: ${order.customerWhatsapp}</p>
+                            <p class="text-sm text-gray-600">Tanggal: ${new Date(order.date).toLocaleDateString('id-ID')}</p>
+                            <p class="text-sm text-gray-600">Status: ${
+                                order.status === 'completed' ? 'Selesai' : 
+                                order.status === 'processing' ? 'Diproses' : 
+                                'Menunggu'
+                            }</p>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-medium mb-2">Items:</h4>
+                            ${itemsHtml}
+                        </div>
+                        <div class="flex justify-between font-semibold">
+                            <span>Total:</span>
+                            <span>Rp ${order.total.toLocaleString('id-ID')}</span>
+                        </div>
+                        <button onclick="closeOrderDetails()" class="mt-4 w-full bg-amber-500 text-white py-2 rounded-lg hover:bg-amber-600 transition">
+                            Tutup
+                        </button>
+                    </div>
+                `;
+                
+                const modal = document.createElement('div');
+                modal.id = 'order-details-modal';
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+                modal.innerHTML = detailsHtml;
+                document.body.appendChild(modal);
+            }
+        }
+
+        function closeOrderDetails() {
+            const modal = document.getElementById('order-details-modal');
+            if (modal) {
+                document.body.removeChild(modal);
+            }
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('total-products').textContent = products.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(order => order.date.startsWith(today));
+            document.getElementById('today-orders').textContent = todayOrders.length;
+            
+            const todayRevenue = todayOrders.reduce((sum, order) => sum + order.total, 0);
+            document.getElementById('today-revenue').textContent = `Rp ${todayRevenue.toLocaleString('id-ID')}`;
+            
+            document.getElementById('total-orders').textContent = orders.length;
+        }
+
+        function loadRecentOrders() {
+            const recentOrdersContainer = document.getElementById('recent-orders');
+            recentOrdersContainer.innerHTML = '';
+            
+            const sortedOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            if (sortedOrders.length === 0) {
+                recentOrdersContainer.innerHTML = '<p class="text-gray-500">Belum ada pesanan</p>';
+                return;
+            }
+            
+            sortedOrders.forEach(order => {
+                const orderElement = document.createElement('div');
+                orderElement.className = 'bg-white p-4 rounded-lg shadow';
+                orderElement.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-medium">#${order.id} - ${order.customerName}</p>
+                            <p class="text-sm text-gray-500">${new Date(order.date).toLocaleDateString('id-ID')}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-medium">Rp ${order.total.toLocaleString('id-ID')}</p>
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                order.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                order.status === 'processing' ? 'bg-yellow-100 text-yellow-800' : 
+                                'bg-blue-100 text-blue-800'
+                            }">
+                                ${order.status === 'completed' ? 'Selesai' : 
+                                  order.status === 'processing' ? 'Diproses' : 
+                                  'Menunggu'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                recentOrdersContainer.appendChild(orderElement);
+            });
+        }
+
+        function handleSettingsSubmit(event) {
+            event.preventDefault();
+            showNotification('Pengaturan berhasil disimpan!');
+        }
+
+        function filterProducts(category) {
+            currentFilter = category;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-amber-500', 'text-white');
+            
+            displayProducts();
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            showNotification('Pesan Anda telah terkirim! Kami akan segera menghubungi Anda.');
+            event.target.reset();
+        }
+
+        function handleNewsletter(event) {
+            event.preventDefault();
+            showNotification('Terima kasih telah berlangganan newsletter kami!');
+            event.target.reset();
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            notificationText.textContent = message;
+            
+            if (type === 'error') {
+                notification.classList.remove('bg-green-500');
+                notification.classList.add('bg-red-500');
+            } else {
+                notification.classList.remove('bg-red-500');
+                notification.classList.add('bg-green-500');
+            }
+            
+            notification.classList.remove('translate-x-full');
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
